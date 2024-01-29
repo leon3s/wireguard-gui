@@ -301,7 +301,7 @@ async fn disconnect(app: AppHandle, app_state: State<'_, AppSt>) -> Result<(), A
 }
 
 #[tauri::command]
-async fn update_profile(app: AppHandle, app_state: State<'_, AppSt>, profile_name: String, profile: ProfilePartial) -> Result<(), AppError> {
+async fn update_profile(app_state: State<'_, AppSt>, profile_name: String, profile: ProfilePartial) -> Result<(), AppError> {
   let s = app_state.0.lock().await.clone();
   let path = format!("{}/profiles/{profile_name}.conf", s.conf_dir);
   if !fs::try_exists(&path).await.unwrap() {
@@ -370,7 +370,7 @@ async fn main() {
             let window = match app.get_window("main") {
               Some(window) => window,
               None => {
-                #[allow(unused_mut)]
+                #[allow(unused_mut, unused_assignments)]
                 let mut url = "index.html".to_owned();
                 #[cfg(feature = "dev")]
                 {
