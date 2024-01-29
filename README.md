@@ -34,8 +34,8 @@ Wireguard GUI is a Debian/Linux application that allow you to manage your Wiregu
 - [x] Remove a profile
 - [x] Start a profile
 - [x] Stop a profile
-- [] Import a profile
-- [] Export a profile
+- [ ] Import a profile
+- [ ] Export a profile
 
 ## 💪 Motivation
 
