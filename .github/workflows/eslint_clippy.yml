@@ -13,14 +13,14 @@ jobs:
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v3
-     
+
       # Cache Rust
       - uses: actions/cache@v3
         with:
           path: ./src-tauri/target
           key: ${{ hashFiles('./src-tauri/Cargo.lock') }}
 
-     # Cache Rust
+      # Cache Rust
       - uses: actions/cache@v3
         with:
           path: ~/.cargo
@@ -36,7 +36,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
-     
+
       - name: Install Rust with Clippy
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -49,13 +49,12 @@ jobs:
 
       - name: Create empty 'dist' directory for Tauri generate context
         run: mkdir dist
- 
+
       - name: Install node dependencies
         run: npm install
 
       - name: Run Eslint
         run: npm run lint
- 
+
       - name: Run Clippy
-        run: npm run clippy
- 
+        run: npm run clippy -- --features dev
