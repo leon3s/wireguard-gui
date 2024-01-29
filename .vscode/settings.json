@@ -1,0 +1,16 @@
+{
+  "editor.rulers": [80],
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false,
+  "editor.trimAutoWhitespace": true,
+  "editor.formatOnSave": true,
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "rust-analyzer.showUnlinkedFileNotification": false,
+  "rust-analyzer.checkOnSave": true,
+  "rust-analyzer.check.command": "clippy",
+  "rust-analyzer.cargo.noDefaultFeatures": true,
+  "rust-analyzer.cargo.features": ["dev"],
+  // "typescript.enablePromptUseWorkspaceTsdk": true
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+}

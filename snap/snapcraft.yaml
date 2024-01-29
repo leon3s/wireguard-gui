@@ -1,0 +1,29 @@
+name: wireguard-gui # you probably want to 'snapcraft register <name>'
+base: core22 # the base snap is the execution environment for this snap
+version: '0.1' # just for humans, typically '1.2+git' or '1.3.2'
+summary: Wireguard client gui made with nextauri
+description: |
+  Provide a Wireguard client gui for easy profile management
+grade: devel # must be 'stable' to release into candidate/stable channels
+confinement: devmode # use 'strict' once you have the right plugs and slots
+
+apps:
+  wireguard-gui:
+    extensions: [gnome]
+    command: usr/bin/wireguard-gui
+    desktop: usr/share/applications/com.wireguard-gui.gg
+    common-id: com.wireguard-gui.gg
+    plugs:
+      - gsettings
+      - cups
+
+slots:
+  gnome-text-editor:
+    interface: dbus
+    bus: session
+    name: com.wireguard-gui
+
+parts:
+  my-part:
+    # See 'snapcraft plugins'
+    plugin: nil

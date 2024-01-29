@@ -1,0 +1,61 @@
+# Run Eslint and Clippy
+
+name: Eslint & Clippy
+
+on: [push, pull_request]
+
+jobs:
+  eslint_and_clippy:
+    strategy:
+      fail-fast: true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v3
+     
+      # Cache Rust
+      - uses: actions/cache@v3
+        with:
+          path: ./src-tauri/target
+          key: ${{ hashFiles('./src-tauri/Cargo.lock') }}
+
+     # Cache Rust
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cargo
+          key: ${{ hashFiles('./src-tauri/Cargo.lock') }}
+
+      # Cache Node
+      - uses: actions/cache@v3
+        with:
+          path: ./node_modules
+          key: ${{ hashFiles('./package-lock.json') }}
+
+      - name: Install Node.js v16 LTS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+     
+      - name: Install Rust with Clippy
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Install Tauri dependencies
+        run: |
+          sudo apt-get update
+          sudo apt install libdbus-1-dev libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
+
+      - name: Create empty 'dist' directory for Tauri generate context
+        run: mkdir dist
+ 
+      - name: Install node dependencies
+        run: npm install
+
+      - name: Run Eslint
+        run: npm run lint
+ 
+      - name: Run Clippy
+        run: npm run clippy
+ 
