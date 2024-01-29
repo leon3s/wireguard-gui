@@ -1,18 +1,16 @@
 'use client';
 
-import { Suspense, useCallback, useEffect, useState } from 'react';
+import { Suspense, useCallback } from 'react';
 import Image from 'next/image';
 import { Lock, PowerOff, Unlock } from 'lucide-react';
 
 import { connect, disconnect, useAppLoader, useAppState } from '@/lib/effects';
 import { Button } from '@/components/ui/button';
 import { AppLoader } from '@/components/app-loader';
-import { AppSplashScreen } from '@/components/app-splash-screen';
 import { ProfileTable } from '@/components/profile-table';
 
 export default function Index() {
   const [state, , , , fetchState] = useAppState();
-  const [isFirstRender, setIsFirstRender] = useState(true);
   const [appLoader, setAppLoader] = useAppLoader();
 
   const onConnectionFinish = useCallback(() => {
@@ -45,16 +43,9 @@ export default function Index() {
     disconnect(onConnectionFinish());
   }, [state, setAppLoader, onConnectionFinish]);
 
-  useEffect(() => {
-    if (isFirstRender) {
-      setTimeout(() => setIsFirstRender(() => false), 1000);
-    }
-  }, [isFirstRender]);
-
   return (
     <div className="bg-background">
       <AppLoader {...appLoader} />
-      {isFirstRender ? <AppSplashScreen /> : null}
       <div className="m-auto flex max-w-[1024px] flex-col px-4 pt-4">
         <div className="mb-8 flex items-center justify-between">
           <Image
