@@ -47,8 +47,8 @@ jobs:
           sudo apt-get update
           sudo apt install libdbus-1-dev libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
 
-      - name: Create empty 'dist' directory for Tauri generate context
-        run: mkdir dist
+      - name: Create empty 'out' directory for Tauri generate context
+        run: mkdir out
 
       - name: Install node dependencies
         run: npm install
@@ -57,4 +57,4 @@ jobs:
         run: npm run lint
 
       - name: Run Clippy
-        run: npm run clippy -- --features dev
+        run: npm run clippy
