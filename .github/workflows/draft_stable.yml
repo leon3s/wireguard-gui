@@ -13,7 +13,7 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  release_image:
+  draft_stable:
     runs-on: ubuntu-latest
 
     steps:
@@ -47,7 +47,7 @@ jobs:
         run: gh release view $VERSION-$CHANNEL
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Create new draft release
+      - name: Create draft release
         if: steps.release-exists.outcome == 'failure' && steps.release-exists.conclusion == 'success'
         run: |
           gh release create -d \
