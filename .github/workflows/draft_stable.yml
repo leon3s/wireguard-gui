@@ -53,8 +53,8 @@ jobs:
             $VERSION-$CHANNEL \
             -t -$VERSION-$CHANNEL \
             -F ./CHANGELOG.md \
-            ./src-tauri/target/release/bundle/deb/wireguard-gui_$VERSION_amd64.deb#wireguard-gui_amd64.deb \
-            ./src-tauri/target/release/bundle/appimage/wireguard-gui_$VERSION_amd64.AppImage#wireguard-gui_amd64.AppImage
+            ./src-tauri/target/release/bundle/deb/wireguard-gui_${VERSION}_amd64.deb#wireguard-gui_amd64.deb \
+            ./src-tauri/target/release/bundle/appimage/wireguard-gui_${VERSION}_amd64.AppImage#wireguard-gui_amd64.AppImage
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Update draft release
@@ -68,9 +68,9 @@ jobs:
             wireguard-gui_amd64.AppImage|| true
           gh release upload \
             $VERSION-$CHANNEL \
-            ./src-tauri/target/release/bundle/deb/wireguard-gui_$VERSION_amd64.deb#wireguard-gui_amd64.deb
+            ./src-tauri/target/release/bundle/deb/wireguard-gui_${VERSION}_amd64.deb#wireguard-gui_amd64.deb
           gh release upload \
             $VERSION-$CHANNEL \
-            ./src-tauri/target/release/bundle/appimage/wireguard-gui_$VERSION_amd64.AppImage#wireguard-gui_amd64.AppImage
+            ./src-tauri/target/release/bundle/appimage/wireguard-gui_${VERSION}_amd64.AppImage#wireguard-gui_amd64.AppImage
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
