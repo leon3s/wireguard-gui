@@ -45,7 +45,7 @@ jobs:
         continue-on-error: true
         run: gh release view $VERSION-$CHANNEL
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.CI_TOKEN }}
       - name: Create draft release
         if: steps.release-exists.outcome == 'failure' && steps.release-exists.conclusion == 'success'
         run: |
@@ -56,7 +56,7 @@ jobs:
             ./src-tauri/target/release/bundle/deb/wireguard-gui_${VERSION}_amd64.deb#wireguard-gui_amd64.deb \
             ./src-tauri/target/release/bundle/appimage/wireguard-gui_${VERSION}_amd64.AppImage#wireguard-gui_amd64.AppImage
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.CI_TOKEN }}
       - name: Update draft release
         if: steps.release-exists.outcome == 'success' && steps.release-exists.conclusion == 'success'
         run: |
@@ -73,4 +73,4 @@ jobs:
             $VERSION-$CHANNEL \
             ./src-tauri/target/release/bundle/appimage/wireguard-gui_${VERSION}_amd64.AppImage#wireguard-gui_amd64.AppImage
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.CI_TOKEN }}
