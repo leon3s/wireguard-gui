@@ -8,7 +8,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import ProfileForm from '@/components/profile-form';
 
@@ -29,31 +28,46 @@ export function ProfileDialogForm({
 }: ProfileDialogFormProps) {
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    if (editId && data) return setOpen(true);
-  }, [data, editId]);
+  console.log('ProfileDialogForm:', {
+    editId,
+    data,
+    open,
+  });
 
   const hookSetOpen = useCallback(
     (o: boolean) => {
-      onOpenChange?.(o);
+      console.log('hookSetOpen:', { o });
       setOpen(o);
+      onOpenChange?.(o);
     },
     [onOpenChange],
   );
 
+  useEffect(() => {
+    if (editId && data) {
+      return setOpen(true);
+    } else {
+      return setOpen(false);
+    }
+  }, [editId, data]);
+
+  const openModal = useCallback(() => {
+    setOpen(true);
+  }, []);
+
   const hookAfterSubmit = useCallback(
     (profile: Profile) => {
+      console.log('hookAfterSubmit', { profile });
       afterSubmit?.(profile);
-      setOpen(false);
     },
     [afterSubmit],
   );
 
   return (
     <Dialog open={open} onOpenChange={hookSetOpen}>
-      <DialogTrigger asChild className={cn('cursor-pointer', className)}>
+      <div onClick={openModal} className={cn('cursor-pointer', className)}>
         <Plus className="mr-2 size-4" />
-      </DialogTrigger>
+      </div>
       <DialogContent className="h-full sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{editId ? 'Edit' : 'Create'} profile</DialogTitle>

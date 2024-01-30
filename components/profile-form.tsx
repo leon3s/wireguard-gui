@@ -74,21 +74,22 @@ export default function ProfileForm({
   const onSubmit = useCallback(
     (profile: z.infer<typeof formSchema>) => {
       setIsLoading(true);
-      if (!editId) {
-        return createProfile(
+      if (editId) {
+        updateProfile(
+          editId,
+          profile,
+          () => afterSubmit?.(profile),
+          (err) => setError(err.message ? err.message : err),
+          () => setIsLoading(false),
+        );
+      } else {
+        createProfile(
           profile,
           () => afterSubmit?.(profile),
           (err) => setError(err.message ? err.message : err),
           () => setIsLoading(false),
         );
       }
-      updateProfile(
-        editId,
-        profile,
-        () => afterSubmit?.(profile),
-        (err) => setError(err.message ? err.message : err),
-        () => setIsLoading(false),
-      );
     },
     [editId, afterSubmit],
   );

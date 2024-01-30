@@ -114,7 +114,7 @@ export function ProfileTable({ current, onConnect }: ProfileTableProps) {
   const pathname = usePathname();
   const qs = useSearchParams();
   const editId = qs.get('e');
-  const [data, , , , fetchData] = useProfiles();
+  const [data, , , setData, fetchData] = useProfiles();
 
   const columns = useMemo<ColumnDef<Profile>[]>(
     () => [
@@ -137,19 +137,30 @@ export function ProfileTable({ current, onConnect }: ProfileTableProps) {
 
   const editProfile = useMemo(
     () => tableData.find(({ name }) => name === editId) || null,
-    [tableData, editId],
+    [editId, tableData],
   );
 
   const onDelete = useCallback(() => fetchData(), [fetchData]);
 
-  const onProfileFormOpenChange = useCallback(() => {
-    router.replace(pathname);
-  }, [router, pathname]);
+  const onProfileFormOpenChange = useCallback(
+    (o: boolean) => {
+      if (o) return;
+      router.replace(pathname);
+    },
+    [router, pathname],
+  );
 
-  const afterProfileForm = useCallback(() => {
-    fetchData();
-    onProfileFormOpenChange();
-  }, [fetchData, onProfileFormOpenChange]);
+  const afterProfileForm = useCallback(
+    (profile: Profile) => {
+      onProfileFormOpenChange(false);
+      if (editId) {
+        setData((d) => d?.map((p) => (p.name === editId ? profile : p)));
+      } else {
+        setData((d) => [...(d || []), profile]);
+      }
+    },
+    [setData, editId, onProfileFormOpenChange],
+  );
 
   console.log({ editId, editProfile });
 
