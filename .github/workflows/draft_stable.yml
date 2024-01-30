@@ -27,7 +27,6 @@ jobs:
       - name: Print Info
         run: |
           echo $GITHUB_REF
-          echo $BRANCH_NAME
           echo $CHANNEL
           echo $VERSION
       - name: Install Tauri dependencies
