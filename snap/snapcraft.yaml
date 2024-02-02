@@ -39,6 +39,7 @@ parts:
     build-packages:
       - dpkg
       - wget
+
     stage-packages:
       - wireguard-tools
       - zenity
@@ -61,3 +62,4 @@ layout:
     bind: $SNAP_DATA/conf
   /var/lib/NetworkManager:
     bind: $SNAP_DATA/var/lib/NetworkManager
+
