@@ -54,7 +54,7 @@ impl Default for AppStInner {
       conf_dir: format!("{home}/.config/wireguard-gui"),
       current: None,
       pub_ip: None,
-      profiles: vec![]
+      profiles: vec![],
     }
   }
 }
@@ -65,7 +65,6 @@ unsafe impl Send for AppStInner {}
 struct AppSt(Arc<Mutex<AppStInner>>);
 
 unsafe impl Send for AppSt {}
-
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct AppError {
@@ -83,24 +82,23 @@ pub struct Profile {
 /// We create 2 scripts one to open a popup to allow root
 /// And the other to execute wg-quick as root with the provided config
 async fn create_scripts(conf_dir: &str) {
-  std::fs::create_dir_all(
-    format!("{conf_dir}/profiles"),
-  )
-  .unwrap();
+  std::fs::create_dir_all(format!("{conf_dir}/profiles")).unwrap();
   let wg_path = format!("{conf_dir}/wg.sh");
   std::fs::write(&wg_path, WG_SCRIPT).unwrap();
   std::fs::set_permissions(&wg_path, std::fs::Permissions::from_mode(0o700))
     .unwrap();
   let zenity_path = format!("{conf_dir}/zenity.sh");
   fs::write(&zenity_path, WG_ZENITY_SCRIPT).await.unwrap();
-  fs::set_permissions(&zenity_path, std::fs::Permissions::from_mode(0o700)).await
+  fs::set_permissions(&zenity_path, std::fs::Permissions::from_mode(0o700))
+    .await
     .unwrap();
 }
 
 async fn get_con_st(current: &str) -> ConnSt {
   let output = Command::new("ip")
     .args(["-br", "link", "show", "dev", &current])
-    .output().await
+    .output()
+    .await
     .expect("ip command failed");
   // check status code
   if output.status.success() {
@@ -146,10 +144,13 @@ async fn create_tray_menu(app_state: &AppSt) -> SystemTray {
     .add_item(open);
   let s = app_state.0.lock().await;
   if s.conn_st == ConnSt::Connected {
-    tray_menu = tray_menu.add_item(CustomMenuItem::new(
-      "conn_info".to_string(),
-      format!("Selected {}", s.current.clone().unwrap()),
-    ).disabled());
+    tray_menu = tray_menu.add_item(
+      CustomMenuItem::new(
+        "conn_info".to_string(),
+        format!("Selected {}", s.current.clone().unwrap()),
+      )
+      .disabled(),
+    );
     system_tray =
       system_tray.with_icon(Icon::Raw(TRAY_CONNECTED_ICON.to_vec()));
   } else {
@@ -165,33 +166,47 @@ async fn create_tray_menu(app_state: &AppSt) -> SystemTray {
   system_tray.with_menu(tray_menu).with_tooltip(APP_TITLE)
 }
 
-async fn exec_wg(app_state: &AppSt, profile: &str) {
+async fn exec_wg(app_state: &AppSt, profile: &str) -> Result<(), AppError> {
   let conf_dir = app_state.0.lock().await.conf_dir.clone();
   let mut envs = HashMap::new();
   envs.insert("PROFILE".to_owned(), profile);
-  Command::new("bash")
+  let res = Command::new("bash")
     .args([format!("{conf_dir}/wg.sh")])
     .envs(envs)
-    .output().await
+    .output()
+    .await
     .expect("failed to execute process");
+  if res.status.code().unwrap_or_default() != 0 {
+    return Err(AppError {
+      message: String::from_utf8(res.stderr).unwrap_or_default(),
+    });
+  }
+  Ok(())
 }
 
 async fn get_pub_ip() -> Result<String, AppError> {
   let payload = reqwest::get("https://httpbin.org/ip")
-  .await.unwrap()
-  .json::<IpPayload>()
-  .await.unwrap();
+    .await
+    .unwrap()
+    .json::<IpPayload>()
+    .await
+    .unwrap();
   println!("payload: {:?}", payload);
   Ok(payload.origin)
 }
 
 #[tauri::command]
-async fn get_state(app_state: State<'_, AppSt>) -> Result<AppStInner, AppError> {
+async fn get_state(
+  app_state: State<'_, AppSt>,
+) -> Result<AppStInner, AppError> {
   Ok(app_state.0.lock().await.clone())
 }
 
 #[tauri::command]
-async fn create_profile(app_state: State<'_, AppSt>, new_profile: ProfilePartial) -> Result<(), AppError> {
+async fn create_profile(
+  app_state: State<'_, AppSt>,
+  new_profile: ProfilePartial,
+) -> Result<(), AppError> {
   let s = app_state.0.lock().await.clone();
   // allow only alphanumerac
   let name = new_profile.name;
@@ -204,33 +219,45 @@ async fn create_profile(app_state: State<'_, AppSt>, new_profile: ProfilePartial
   if fs::try_exists(&path).await.unwrap() {
     return Err(AppError {
       message: "Profile already exist".into(),
-    })
+    });
   }
   fs::write(path, new_profile.content).await.unwrap();
   Ok(())
 }
 
 #[tauri::command]
-async fn delete_profile(app: AppHandle, app_state: State<'_, AppSt>, profile_name: String) -> Result<(), AppError> {
+async fn delete_profile(
+  app: AppHandle,
+  app_state: State<'_, AppSt>,
+  profile_name: String,
+) -> Result<(), AppError> {
   let s = app_state.0.lock().await.clone();
   if let Some(current) = s.current {
     if current == profile_name {
-      exec_wg(&app_state, &current).await;
-        // Sleep for 1seconds to let time for network to stabilize
-        tokio::time::sleep(std::time::Duration::from_secs(5)).await;
-        let mut s = app_state.0.lock().await;
-        s.current = None;
-        s.conn_st = ConnSt::Disconnected;
-        app
-          .tray_handle()
-          .set_icon(Icon::Raw(TRAY_DISCONNECTED_ICON.to_vec()))
-          .unwrap();
-        app.tray_handle().get_item("conn_info").set_title("Not connected").unwrap();
-        app.tray_handle().get_item("conn_info").set_enabled(false).unwrap();
-        s.pub_ip = match get_pub_ip().await {
-          Ok(pub_ip) => Some(pub_ip),
-          Err(_) => None,
-        };
+      exec_wg(&app_state, &current).await?;
+      // Sleep for to let time for network to stabilize
+      tokio::time::sleep(std::time::Duration::from_secs(5)).await;
+      let mut s = app_state.0.lock().await;
+      s.current = None;
+      s.conn_st = ConnSt::Disconnected;
+      app
+        .tray_handle()
+        .set_icon(Icon::Raw(TRAY_DISCONNECTED_ICON.to_vec()))
+        .unwrap();
+      app
+        .tray_handle()
+        .get_item("conn_info")
+        .set_title("Not connected")
+        .unwrap();
+      app
+        .tray_handle()
+        .get_item("conn_info")
+        .set_enabled(false)
+        .unwrap();
+      s.pub_ip = match get_pub_ip().await {
+        Ok(pub_ip) => Some(pub_ip),
+        Err(_) => None,
+      };
     };
   };
   let path = format!("{}/profiles/{profile_name}.conf", s.conf_dir);
@@ -239,15 +266,21 @@ async fn delete_profile(app: AppHandle, app_state: State<'_, AppSt>, profile_nam
 }
 
 #[tauri::command]
-async fn connect_profile(app: AppHandle, app_state: State<'_, AppSt>, profile: String) -> Result<(), AppError>{
+async fn connect_profile(
+  app: AppHandle,
+  app_state: State<'_, AppSt>,
+  profile: String,
+) -> Result<(), AppError> {
   let s = app_state.0.lock().await.clone();
   let conf_dir = s.conf_dir.clone();
   let current = s.current;
   if let Some(current) = current {
-    exec_wg(&app_state, &current).await;
+    exec_wg(&app_state, &current).await?;
   }
-  exec_wg(&app_state, &profile).await;
-  tokio::fs::write(format!("{conf_dir}/current"), &profile.trim()).await.unwrap();
+  exec_wg(&app_state, &profile).await?;
+  tokio::fs::write(format!("{conf_dir}/current"), &profile.trim())
+    .await
+    .unwrap();
   // Sleep for 1seconds to let time for network to stabilize
   tokio::time::sleep(std::time::Duration::from_secs(5)).await;
   app
@@ -275,12 +308,15 @@ async fn connect_profile(app: AppHandle, app_state: State<'_, AppSt>, profile: S
 }
 
 #[tauri::command]
-async fn disconnect(app: AppHandle, app_state: State<'_, AppSt>) -> Result<(), AppError>{
+async fn disconnect(
+  app: AppHandle,
+  app_state: State<'_, AppSt>,
+) -> Result<(), AppError> {
   let s = app_state.0.lock().await.clone();
   let Some(current) = s.current else {
     return Ok(());
   };
-  exec_wg(&app_state, &current).await;
+  exec_wg(&app_state, &current).await?;
   let _ = fs::remove_file(format!("{}/current", s.conf_dir)).await;
   // Sleep for 1seconds to let time for network to stabilize
   tokio::time::sleep(std::time::Duration::from_secs(5)).await;
@@ -291,8 +327,16 @@ async fn disconnect(app: AppHandle, app_state: State<'_, AppSt>) -> Result<(), A
     .tray_handle()
     .set_icon(Icon::Raw(TRAY_DISCONNECTED_ICON.to_vec()))
     .unwrap();
-  app.tray_handle().get_item("conn_info").set_title("Not connected").unwrap();
-  app.tray_handle().get_item("conn_info").set_enabled(false).unwrap();
+  app
+    .tray_handle()
+    .get_item("conn_info")
+    .set_title("Not connected")
+    .unwrap();
+  app
+    .tray_handle()
+    .get_item("conn_info")
+    .set_enabled(false)
+    .unwrap();
   s.pub_ip = match get_pub_ip().await {
     Ok(pub_ip) => Some(pub_ip),
     Err(_) => None,
@@ -301,7 +345,11 @@ async fn disconnect(app: AppHandle, app_state: State<'_, AppSt>) -> Result<(), A
 }
 
 #[tauri::command]
-async fn update_profile(app_state: State<'_, AppSt>, profile_name: String, profile: ProfilePartial) -> Result<(), AppError> {
+async fn update_profile(
+  app_state: State<'_, AppSt>,
+  profile_name: String,
+  profile: ProfilePartial,
+) -> Result<(), AppError> {
   let s = app_state.0.lock().await.clone();
   let path = format!("{}/profiles/{profile_name}.conf", s.conf_dir);
   if !fs::try_exists(&path).await.unwrap() {
@@ -312,15 +360,15 @@ async fn update_profile(app_state: State<'_, AppSt>, profile_name: String, profi
   let mut is_current = false;
   if let Some(current) = s.current {
     if profile_name == current {
-      exec_wg(&app_state, &profile_name).await;
+      exec_wg(&app_state, &profile_name).await?;
       is_current = true;
     }
   }
   fs::write(path, profile.content).await.unwrap();
   if !is_current {
-    return Ok(())
+    return Ok(());
   }
-  exec_wg(&app_state, &profile_name).await;
+  exec_wg(&app_state, &profile_name).await?;
   tokio::time::sleep(std::time::Duration::from_secs(5)).await;
   let mut s = app_state.0.lock().await;
   s.pub_ip = match get_pub_ip().await {
@@ -331,7 +379,9 @@ async fn update_profile(app_state: State<'_, AppSt>, profile_name: String, profi
 }
 
 #[tauri::command]
-async fn list_profile(app_state: State<'_, AppSt>) -> Result<Vec<Profile>, AppError> {
+async fn list_profile(
+  app_state: State<'_, AppSt>,
+) -> Result<Vec<Profile>, AppError> {
   let conf_dir = app_state.0.lock().await.conf_dir.clone();
   let path = format!("{conf_dir}/profiles");
   let mut dirs = fs::read_dir(path).await.unwrap();
