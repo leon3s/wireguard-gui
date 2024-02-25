@@ -3,18 +3,10 @@
 import { useCallback, useMemo } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ColumnDef } from '@tanstack/react-table';
-import { DeleteIcon, Edit, MoreHorizontal, Rocket } from 'lucide-react';
+import { DeleteIcon, Edit, Rocket } from 'lucide-react';
 
 import type { Profile } from '@/types/profile';
 import { useProfiles } from '@/lib/effects';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 
 import { ProfileDialogDelete } from './profile-dialog-delete';
 import { ProfileDialogForm } from './profile-dialog-form';
@@ -72,40 +64,29 @@ function ProfileActions({
   }, [pathname, profile.name, router]);
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <div className="flex w-full justify-end">
-          <Button variant="ghost" className="size-8 p-0">
-            <span className="sr-only">Open menu</span>
-            <MoreHorizontal className="size-4" />
-          </Button>
-        </div>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem
-          className="cursor-pointer"
-          onClick={onConnect(profile.name)}
-        >
-          <div className="flex w-full justify-between">
-            <p>Connect</p>
-            <Rocket className="ml-2 size-4" />
-          </div>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer" onClick={onEdit}>
-          <div className="flex w-full justify-between">
-            <p>Edit</p>
-            <Edit className="ml-2 size-4" />
-          </div>
-        </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer" onClick={onDelete}>
-          <div className="flex w-full justify-between">
-            <p>Delete</p>
-            <DeleteIcon className="ml-2 size-4" />
-          </div>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div className="flex flex-row">
+      <button
+        className="flex w-full justify-between"
+        title="Delete"
+        onClick={onDelete}
+      >
+        <DeleteIcon className="ml-2 size-4 text-red-500" />
+      </button>
+      <button
+        className="flex w-full justify-between"
+        title="Edit"
+        onClick={onEdit}
+      >
+        <Edit className="ml-2 size-4 text-blue-500" />
+      </button>
+      <button
+        className="flex w-full justify-between"
+        title="Connect"
+        onClick={onConnect(profile.name)}
+      >
+        <Rocket className="ml-2 size-4 text-green-500" />
+      </button>
+    </div>
   );
 }
 
@@ -161,8 +142,6 @@ export function ProfileTable({ current, onConnect }: ProfileTableProps) {
     },
     [setData, editId, onProfileFormOpenChange],
   );
-
-  console.log({ editId, editProfile });
 
   return (
     <div>
