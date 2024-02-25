@@ -1,5 +1,5 @@
 {
-  "name": "nextauri",
+  "name": "wireguard-gui",
   "scripts": {
     "dev": "tauri dev",
     "tauri": "tauri",
