@@ -44,7 +44,8 @@ I wanted to make an application with nextauri since a while, so i took this oppo
 
 ## 📦 Installation
 
-I'm going to make a release soon, but for now you can build it yourself.
+Release are currently only available as a .deb package for Debian/Ubuntu.
+It can be found on the [release page](https://github.com/leon3s/wireguard-gui/releases/latest)
 
 ## 🚀 Demo
 
@@ -59,7 +60,7 @@ Be sure you have [NodeJS](https://nodejs.org/en/) and [Rust](https://www.rust-la
 2.  Clone or fork this repository
     ```sh
     git clone https://github.com/leon3s/wireguard-gui
-    cd nextauri
+    cd wireguard-gui
     ```
 3.  Install node dependencies
     ```sh
