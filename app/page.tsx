@@ -72,7 +72,7 @@ export default function Index() {
             <Unlock className="animate-pulsemb-2 size-16 text-red-500" />
           )}
           <p className="mt-2 font-bold">{state.current || 'Not connected'}</p>
-          <p className="font-bold">{state?.pub_ip || 'Unknow'}</p>
+          <p className="font-bold">{state?.pub_ip || 'Unknown'}</p>
         </div>
         <Suspense>
           <ProfileTable current={state?.current} onConnect={onConnect} />

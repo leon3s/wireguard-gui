@@ -28,12 +28,6 @@ export function ProfileDialogForm({
 }: ProfileDialogFormProps) {
   const [open, setOpen] = useState(false);
 
-  console.log('ProfileDialogForm:', {
-    editId,
-    data,
-    open,
-  });
-
   const hookSetOpen = useCallback(
     (o: boolean) => {
       console.log('hookSetOpen:', { o });
@@ -65,7 +59,11 @@ export function ProfileDialogForm({
 
   return (
     <Dialog open={open} onOpenChange={hookSetOpen}>
-      <div onClick={openModal} className={cn('cursor-pointer', className)}>
+      <div
+        onClick={openModal}
+        className={cn('cursor-pointer', className)}
+        title="New"
+      >
         <Plus className="mr-2 size-4" />
       </div>
       <DialogContent className="h-full sm:max-w-[425px]">
