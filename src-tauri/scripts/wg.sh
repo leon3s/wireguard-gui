@@ -15,7 +15,6 @@ cat <<EOF > /tmp/wireguard-tmp.sh
 
 if [ ! -f "$profile_path" ]; then
   ln -s "$home/.config/wireguard-gui/profiles/$profile.conf" "$profile_path"
-  chmod 400 "$profile_path"
 fi
 
 if ip a | grep -q $profile; then
