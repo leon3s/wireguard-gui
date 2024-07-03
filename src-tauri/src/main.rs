@@ -96,7 +96,7 @@ async fn create_scripts(conf_dir: &str) {
 
 async fn get_con_st(current: &str) -> ConnSt {
   let output = Command::new("ip")
-    .args(["-br", "link", "show", "dev", &current])
+    .args(["-br", "link", "show", "dev", current])
     .output()
     .await
     .expect("ip command failed");
@@ -114,7 +114,6 @@ async fn init_app_st() -> AppSt {
   let app_state = AppSt(Arc::new(Mutex::new(default_state)));
   create_scripts(&conf_dir).await;
   let mut s = app_state.0.lock().await;
-  println!("current: {:?}", current);
   s.pub_ip = match get_pub_ip().await {
     Ok(pub_ip) => Some(pub_ip),
     Err(_) => None,
@@ -126,10 +125,7 @@ async fn init_app_st() -> AppSt {
       s.current = None;
       let _ = fs::remove_file(format!("{}/current", s.conf_dir)).await;
     }
-    println!("state: {:?}", s);
   }
-  println!("app inited");
-  println!("app state: {:?}", app_state);
   app_state.clone()
 }
 
@@ -191,7 +187,6 @@ async fn get_pub_ip() -> Result<String, AppError> {
     .json::<IpPayload>()
     .await
     .unwrap();
-  println!("payload: {:?}", payload);
   Ok(payload.origin)
 }
 
