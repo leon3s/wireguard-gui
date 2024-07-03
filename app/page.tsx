@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useCallback, useState } from 'react';
+import { Suspense, useCallback } from 'react';
 import Image from 'next/image';
 import { Lock, PowerOff, Unlock } from 'lucide-react';
 
@@ -21,7 +21,7 @@ export default function Index() {
   }, [fetchState, setAppLoader]);
 
   const onError = useCallback((err: any) => {
-    alert(err?.message || "Unknow error");
+    alert(err?.message || 'Unknow error');
   }, []);
 
   const onConnect = useCallback(
