@@ -13,9 +13,7 @@ profile_path="/etc/wireguard/$profile.conf"
 cat <<EOF > /tmp/wireguard-tmp.sh
 #!/bin/bash
 
-if [ ! -f "$profile_path" ]; then
-  ln -s "$home/.config/wireguard-gui/profiles/$profile.conf" "$profile_path"
-fi
+cp -f "$home/.config/wireguard-gui/profiles/$profile.conf" "$profile_path"
 
 if ip a | grep -q $profile; then
   wg-quick down $profile
@@ -28,4 +26,10 @@ chmod +x /tmp/wireguard-tmp.sh
 
 sudo -A -s /tmp/wireguard-tmp.sh
 
+STATUS=$?
+
+echo "Return code: $STATUS"
+
 rm /tmp/wireguard-tmp.sh
+
+exit $STATUS

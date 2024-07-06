@@ -20,6 +20,10 @@ export default function Index() {
     };
   }, [fetchState, setAppLoader]);
 
+  const onError = useCallback((err: any) => {
+    alert(err?.message || 'Unknow error');
+  }, []);
+
   const onConnect = useCallback(
     (profile: string) => {
       return () => {
@@ -28,10 +32,10 @@ export default function Index() {
           isOpen: true,
           message: `Connecting to ${profile}`,
         });
-        connect(profile, onConnectionFinish());
+        connect(profile, onConnectionFinish(), onError);
       };
     },
-    [setAppLoader, onConnectionFinish],
+    [setAppLoader, onConnectionFinish, onError],
   );
 
   const onDisconnect = useCallback(() => {
@@ -40,8 +44,8 @@ export default function Index() {
       isOpen: true,
       message: `Disconnecting from ${state.current}`,
     });
-    disconnect(onConnectionFinish());
-  }, [state, setAppLoader, onConnectionFinish]);
+    disconnect(onConnectionFinish(), onError);
+  }, [state, setAppLoader, onConnectionFinish, onError]);
 
   return (
     <div className="bg-background">

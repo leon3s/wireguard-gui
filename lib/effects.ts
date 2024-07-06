@@ -28,13 +28,14 @@ export function useProfiles() {
   return useInvoke<Profile[], Profile[]>([], 'list_profile');
 }
 
-export function disconnect(onfinally?: () => void) {
-  require('@tauri-apps/api').invoke('disconnect').finally(onfinally);
+export function disconnect(onfinally?: () => void, onerror?: (err: any) => void) {
+  require('@tauri-apps/api').invoke('disconnect').catch(onerror).finally(onfinally);
 }
 
-export function connect(profile: string, onfinally?: () => void) {
+export function connect(profile: string, onfinally?: () => void, onerror?: (err: any) => void) {
   require('@tauri-apps/api')
     .invoke('connect_profile', { profile })
+    .catch(onerror)
     .finally(onfinally);
 }
 
