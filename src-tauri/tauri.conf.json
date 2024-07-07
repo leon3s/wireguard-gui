@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "wireguard-gui",
-    "version": "0.1.1"
+    "version": "0.1.2"
   },
   "tauri": {
     "systemTray": {
@@ -33,7 +33,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.wireguard-gui.gg",
+      "identifier": "com.wireguard-gui.io",
       "longDescription": "A wireguard gui for linux made with nextauri",
       "macOS": {
         "entitlements": null,
