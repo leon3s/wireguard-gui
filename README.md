@@ -42,6 +42,14 @@ Wireguard GUI is a Debian/Linux application that allow you to manage your Wiregu
 I didn't found any GUI application that allow me to manage my Wireguard VPN configuration. <br />
 I wanted to make an application with nextauri since a while, so i took this opportunity to make it.
 
+## Pre-requisites
+
+In order to work properly, the application needs the following dependencies:
+
+- Wireguard
+- Zenity
+- Resolvconf
+
 ## 📦 Installation
 
 Release are currently only available as a .deb package for Debian/Ubuntu.
