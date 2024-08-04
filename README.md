@@ -22,6 +22,10 @@
 
 </div>
 
+## IMPORTANT
+
+The snap version is currently not working, please use the .deb package instead.
+
 ## ❓ What is Wireguard GUI ?
 
 Wireguard GUI is a Debian/Linux application that allow you to manage your Wireguard VPN configuration.
@@ -46,9 +50,9 @@ I wanted to make an application with nextauri since a while, so i took this oppo
 
 In order to work properly, the application needs the following dependencies:
 
-- Wireguard
-- Zenity
-- Resolvconf
+```sh
+sudo apt install libcanberra-gtk-module libjavascriptcoregtk-4.0-18 libicu70 libwebkit2gtk-4.0-37 wireguard zenity resolvconf
+```
 
 ## 📦 Installation
 

@@ -30,7 +30,6 @@ export function ProfileDialogForm({
 
   const hookSetOpen = useCallback(
     (o: boolean) => {
-      console.log('hookSetOpen:', { o });
       setOpen(o);
       onOpenChange?.(o);
     },
@@ -51,10 +50,12 @@ export function ProfileDialogForm({
 
   const hookAfterSubmit = useCallback(
     (profile: Profile) => {
-      console.log('hookAfterSubmit', { profile });
       afterSubmit?.(profile);
+      if (!editId) {
+        hookSetOpen(false);
+      }
     },
-    [afterSubmit],
+    [afterSubmit, hookSetOpen, editId],
   );
 
   return (

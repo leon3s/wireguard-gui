@@ -1,7 +1,8 @@
 'use client';
 
-import { Suspense, useCallback } from 'react';
+import { Suspense, useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
+import { getVersion } from '@tauri-apps/api/app';
 import { Lock, PowerOff, Unlock } from 'lucide-react';
 
 import { connect, disconnect, useAppLoader, useAppState } from '@/lib/effects';
@@ -12,6 +13,11 @@ import { ProfileTable } from '@/components/profile-table';
 export default function Index() {
   const [state, , , , fetchState] = useAppState();
   const [appLoader, setAppLoader] = useAppLoader();
+  const [appVersion, setAppVersion] = useState<string | null>(null);
+
+  useEffect(() => {
+    getVersion().then((v) => setAppVersion(v));
+  }, []);
 
   const onConnectionFinish = useCallback(() => {
     return () => {
@@ -59,6 +65,7 @@ export default function Index() {
             width={42}
             height={42}
           />
+          <strong>v{appVersion}</strong>
           <Button
             disabled={state?.conn_st !== 'Connected'}
             title="disconnect"
