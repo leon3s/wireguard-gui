@@ -17,7 +17,7 @@ export default function Index() {
 
   useEffect(() => {
     getVersion().then((v) => setAppVersion(v));
-  }, [setAppVersion]);
+  }, []);
 
   const onConnectionFinish = useCallback(() => {
     return () => {

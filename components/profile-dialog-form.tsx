@@ -33,7 +33,7 @@ export function ProfileDialogForm({
       setOpen(o);
       onOpenChange?.(o);
     },
-    [onOpenChange, setOpen],
+    [onOpenChange],
   );
 
   useEffect(() => {
@@ -42,11 +42,11 @@ export function ProfileDialogForm({
     } else {
       return setOpen(false);
     }
-  }, [editId, data, setOpen]);
+  }, [editId, data]);
 
   const openModal = useCallback(() => {
     setOpen(true);
-  }, [setOpen]);
+  }, []);
 
   const hookAfterSubmit = useCallback(
     (profile: Profile) => {
