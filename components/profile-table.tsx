@@ -138,8 +138,9 @@ export function ProfileTable({ current, onConnect }: ProfileTableProps) {
       } else {
         setData((d) => [...(d || []), profile]);
       }
+      router.replace(pathname);
     },
-    [setData, editId],
+    [setData, editId, router, pathname],
   );
 
   return (
