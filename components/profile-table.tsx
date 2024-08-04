@@ -133,14 +133,14 @@ export function ProfileTable({ current, onConnect }: ProfileTableProps) {
 
   const afterProfileForm = useCallback(
     (profile: Profile) => {
-      onProfileFormOpenChange(false);
       if (editId) {
         setData((d) => d?.map((p) => (p.name === editId ? profile : p)));
       } else {
         setData((d) => [...(d || []), profile]);
       }
+      router.replace(pathname);
     },
-    [setData, editId, onProfileFormOpenChange],
+    [setData, editId, router, pathname],
   );
 
   return (

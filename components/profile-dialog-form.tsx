@@ -30,11 +30,10 @@ export function ProfileDialogForm({
 
   const hookSetOpen = useCallback(
     (o: boolean) => {
-      console.log('hookSetOpen:', { o });
       setOpen(o);
       onOpenChange?.(o);
     },
-    [onOpenChange],
+    [onOpenChange, setOpen],
   );
 
   useEffect(() => {
@@ -43,18 +42,20 @@ export function ProfileDialogForm({
     } else {
       return setOpen(false);
     }
-  }, [editId, data]);
+  }, [editId, data, setOpen]);
 
   const openModal = useCallback(() => {
     setOpen(true);
-  }, []);
+  }, [setOpen]);
 
   const hookAfterSubmit = useCallback(
     (profile: Profile) => {
-      console.log('hookAfterSubmit', { profile });
       afterSubmit?.(profile);
+      if (!editId) {
+        hookSetOpen(false);
+      }
     },
-    [afterSubmit],
+    [afterSubmit, hookSetOpen, editId],
   );
 
   return (
