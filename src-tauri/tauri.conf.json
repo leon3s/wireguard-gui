@@ -21,7 +21,7 @@
     "bundle": {
       "active": true,
       "category": "Utility",
-      "copyright": "",
+      "copyright": "Copyright (c) 2023-2024 Wireguard GUI Contributors",
       "deb": {
         "depends": []
       },
@@ -34,7 +34,7 @@
         "icons/icon.ico"
       ],
       "identifier": "com.wireguard-gui.io",
-      "longDescription": "A wireguard gui for linux made with nextauri",
+      "longDescription": "A WireGuard GUI for Linux made with Nextauri",
       "macOS": {
         "entitlements": null,
         "exceptionDomain": "",
@@ -65,7 +65,7 @@
         "fullscreen": false,
         "height": 600,
         "resizable": false,
-        "title": "Wireguard GUI",
+        "title": "WireGuard GUI",
         "width": 400
       }
     ]
