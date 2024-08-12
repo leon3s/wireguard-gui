@@ -14,7 +14,7 @@ rust-version = "1.57"
 tauri-build = { version = "1.5", features = [] }
 
 [dependencies]
-serde_json = "1.0.122"
+serde_json = "1.0.124"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.7", features = ["system-tray", "api-all", "icon-png"] }
 tauri-plugin-window-state = "0.1.1"
