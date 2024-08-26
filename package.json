@@ -39,7 +39,7 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.20.0",
+    "@typescript-eslint/parser": "^8.2.0",
     "autoprefixer": "^10.4.19",
     "eslint": "8.57.0",
     "eslint-config-airbnb": "^19.0.4",
