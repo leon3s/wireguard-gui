@@ -5,7 +5,7 @@ profile=$PROFILE
 
 echo "Connecting to $profile"
 
-export SUDO_ASKPASS="$home/.config/wireguard-gui/zenity.sh"
+#export SUDO_ASKPASS="$home/.config/wireguard-gui/zenity.sh"
 
 profile_path="/etc/wireguard/$profile.conf"
 
@@ -24,7 +24,7 @@ EOF
 
 chmod +x /tmp/wireguard-tmp.sh
 
-sudo -A -s /tmp/wireguard-tmp.sh
+pkexec /tmp/wireguard-tmp.sh
 
 STATUS=$?
 
