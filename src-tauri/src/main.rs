@@ -205,9 +205,9 @@ async fn create_profile(
   let s = app_state.0.lock().await.clone();
   // allow only alphanumerac
   let name = new_profile.name;
-  if !name.chars().all(|c| c.is_alphanumeric()) {
+  if !name.chars().all(char::is_alphanumeric) {
     return Err(AppError {
-      message: "Name must only containt alphanumeric values".into(),
+      message: "Name must only containt alphanumeric values".to_owned(),
     });
   }
   let path = format!("{}/profiles/{name}.conf", s.conf_dir);
@@ -276,7 +276,7 @@ async fn connect_profile(
   tokio::fs::write(format!("{conf_dir}/current"), &profile.trim())
     .await
     .unwrap();
-  // Sleep for 1seconds to let time for network to stabilize
+  // Sleep for 5 seconds to let time for network to stabilize
   tokio::time::sleep(std::time::Duration::from_secs(5)).await;
   app
     .tray_handle()
