@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Switch from zenity to polkit for authentication
+- Switch from zenity to polkit for authentication by [@CD11b](https://github.com/CD11b)
 
 ## [0.1.3] - 2024-08-04
 
