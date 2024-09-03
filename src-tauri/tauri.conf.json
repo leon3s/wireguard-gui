@@ -21,9 +21,9 @@
     "bundle": {
       "active": true,
       "category": "Utility",
-      "copyright": "Copyright (c) 2023-2024 Wireguard GUI Contributors",
+      "copyright": "Copyright (c) 2024-2025 Wireguard GUI Contributors",
       "deb": {
-        "depends": []
+        "depends": ["libwebkit2gtk-4.0-37"]
       },
       "externalBin": [],
       "icon": [

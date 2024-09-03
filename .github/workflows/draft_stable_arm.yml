@@ -79,11 +79,11 @@ jobs:
             npm install next@latest react@latest react-dom@latest eslint-config-next@latest
             # Install build tools and tauri-cli requirements
             apt-get install -y libwebkit2gtk-4.0-dev build-essential wget libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
-            cargo install tauri-cli
+            # cargo install tauri-cli
             # Install frontend dependencies
             npm install
             # Build the application
-            cargo tauri build
+            npm run tauri build -- --verbose
 
       - name: Test if release already exists
         id: release-exists

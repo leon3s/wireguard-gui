@@ -222,9 +222,9 @@ checksum = "8b75356056920673b02621b35afd0f7dda9306d03c79a30f5c56c44cf256e3de"
 
 [[package]]
 name = "async-trait"
-version = "0.1.81"
+version = "0.1.82"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6e0c28dcc82d7c8ead5cb13beb15405b57b8546e93215673ff8ca0349a028107"
+checksum = "a27b8a3a6e1a44fa4c8baf1f653e4172e81486d4941f2237e20dc2d0cf4ddff1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3998,9 +3998,9 @@ dependencies = [
 
 [[package]]
 name = "tao"
-version = "0.16.9"
+version = "0.16.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "575c856fc21e551074869dcfaad8f706412bd5b803dfa0fbf6881c4ff4bfafab"
+checksum = "48d298c441a1da46e28e8ad8ec205aab7fd8cd71b9d10e05454224eef422e1ae"
 dependencies = [
  "bitflags 1.3.2",
  "cairo-rs",
