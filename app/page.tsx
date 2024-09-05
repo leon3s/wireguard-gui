@@ -56,7 +56,7 @@ export default function Index() {
   return (
     <div className="bg-background">
       <AppLoader {...appLoader} />
-      <div className="m-auto flex max-w-[1024px] flex-col px-4 pt-4">
+      <div className="m-auto flex max-w-screen-lg flex-col px-4 pt-4">
         <div className="mb-8 flex items-center justify-between">
           <Image
             title="Wireguard GUI"

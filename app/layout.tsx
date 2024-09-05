@@ -1,6 +1,6 @@
-import '@/app/globals.css';
-
 import type { Viewport } from 'next';
+
+import '@/app/globals.css';
 
 import { ThemeProvider } from '@/components/theme-provider';
 
