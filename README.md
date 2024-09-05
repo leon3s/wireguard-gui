@@ -51,7 +51,7 @@ I wanted to make an application with nextauri since a while, so i took this oppo
 In order to work properly, the application needs the following dependencies:
 
 ```sh
-sudo apt install libcanberra-gtk-module libjavascriptcoregtk-4.0-18 libicu70 libwebkit2gtk-4.0-37 wireguard zenity resolvconf
+sudo apt install libcanberra-gtk-module libjavascriptcoregtk-4.0-18 libicu70 libwebkit2gtk-4.0-37 wireguard resolvconf
 ```
 
 ## 📦 Installation

@@ -78,7 +78,7 @@ jobs:
             apt-get install -y nodejs
             # npm install next@latest react@latest react-dom@latest eslint-config-next@latest
             # Install build tools and tauri-cli requirements
-            apt-get install -yf libdbus-1-dev libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
+            apt-get install -yf file libdbus-1-dev libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
             # cargo install tauri-cli
             # Install frontend dependencies
             npm install
@@ -99,7 +99,7 @@ jobs:
             -t $VERSION-$CHANNEL \
             -F ./CHANGELOG.md \
             ./src-tauri/target/release/bundle/deb/wireguard-gui_${VERSION}_arm64.deb#wireguard-gui_arm64.deb \
-            ./src-tauri/target/release/bundle/appimage/wireguard-gui_${VERSION}_arm64.AppImage#wireguard-gui_arm64.AppImage
+            ./src-tauri/target/release/bundle/appimage/wireguard-gui_${VERSION}_aarch64.AppImage#wireguard-gui_aarch64.AppImage
         env:
           GITHUB_TOKEN: ${{ secrets.CI_TOKEN }}
 
