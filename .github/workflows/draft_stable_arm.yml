@@ -99,7 +99,7 @@ jobs:
             -t $VERSION-$CHANNEL \
             -F ./CHANGELOG.md \
             ./src-tauri/target/release/bundle/deb/wireguard-gui_${VERSION}_arm64.deb#wireguard-gui_arm64.deb \
-            ./src-tauri/target/release/bundle/appimage/wireguard-gui_${VERSION}_arm64.AppImage#wireguard-gui_arm64.AppImage
+            ./src-tauri/target/release/bundle/appimage/wireguard-gui_${VERSION}_aarch64.AppImage#wireguard-gui_aarch64.AppImage
         env:
           GITHUB_TOKEN: ${{ secrets.CI_TOKEN }}
 
