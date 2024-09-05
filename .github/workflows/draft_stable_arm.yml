@@ -76,9 +76,9 @@ jobs:
             curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash
             # Install framework specific packages
             apt-get install -y nodejs
-            npm install next@latest react@latest react-dom@latest eslint-config-next@latest
+            # npm install next@latest react@latest react-dom@latest eslint-config-next@latest
             # Install build tools and tauri-cli requirements
-            sudo apt install -f libdbus-1-dev libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
+            sudo apt-get install -yf libdbus-1-dev libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
             # cargo install tauri-cli
             # Install frontend dependencies
             npm install

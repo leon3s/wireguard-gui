@@ -1,14 +1,16 @@
-import { useCallback, useEffect, useState } from 'react';
+import React from 'react';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 import type { AppState } from '@/types/app';
 import type { Profile, ProfilePartial } from '@/types/profile';
 import { AppLoaderProps } from '@/components/app-loader';
 
 export function useInvoke<T, I>(initialValue: I, cmd: string, args?: any) {
-  const [data, setData] = useState<T | I>(initialValue);
-  const [err, setErr] = useState<string | null>(null);
-  const [isLoading, setisLoading] = useState<boolean>(true);
-  const fetch = useCallback(() => {
+  const [data, setData] = React.useState<T | I>(initialValue);
+  const [err, setErr] = React.useState<string | null>(null);
+  const [isLoading, setisLoading] = React.useState<boolean>(true);
+  const fetch = React.useCallback(() => {
     setisLoading(true);
     require('@tauri-apps/api')
       .invoke(cmd, args)
@@ -16,7 +18,7 @@ export function useInvoke<T, I>(initialValue: I, cmd: string, args?: any) {
       .catch((error: any) => setErr(error))
       .finally(() => setisLoading(false));
   }, [args, cmd]);
-  useEffect(() => fetch(), [fetch]);
+  React.useEffect(() => fetch(), [fetch]);
   return [data, err, isLoading, setData, fetch] as const;
 }
 
@@ -28,11 +30,21 @@ export function useProfiles() {
   return useInvoke<Profile[], Profile[]>([], 'list_profile');
 }
 
-export function disconnect(onfinally?: () => void, onerror?: (err: any) => void) {
-  require('@tauri-apps/api').invoke('disconnect').catch(onerror).finally(onfinally);
+export function disconnect(
+  onfinally?: () => void,
+  onerror?: (err: any) => void,
+) {
+  require('@tauri-apps/api')
+    .invoke('disconnect')
+    .catch(onerror)
+    .finally(onfinally);
 }
 
-export function connect(profile: string, onfinally?: () => void, onerror?: (err: any) => void) {
+export function connect(
+  profile: string,
+  onfinally?: () => void,
+  onerror?: (err: any) => void,
+) {
   require('@tauri-apps/api')
     .invoke('connect_profile', { profile })
     .catch(onerror)
@@ -40,7 +52,7 @@ export function connect(profile: string, onfinally?: () => void, onerror?: (err:
 }
 
 export function useAppLoader() {
-  const [appLoader, setAppLoader] = useState<AppLoaderProps>({
+  const [appLoader, setAppLoader] = React.useState<AppLoaderProps>({
     kind: 'Connecting',
   });
   return [appLoader, setAppLoader] as const;
@@ -85,3 +97,14 @@ export function updateProfile<T>(
     .catch(onerror)
     .finally(onfinally);
 }
+
+export const useDebounce = (time: number, initialValue: any) => {
+  const [value, setValue] = React.useState(initialValue);
+  const [values] = React.useState(() => new Subject());
+  React.useEffect(() => {
+    const sub = values.pipe(debounceTime(time)).subscribe(setValue);
+    return () => sub.unsubscribe();
+  }, [time, values]);
+  const newSetValue = React.useCallback((v: any) => values.next(v), [values]);
+  return [value, newSetValue] as const;
+};

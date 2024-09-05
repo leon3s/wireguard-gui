@@ -1,16 +1,17 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
+import React from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ColumnDef } from '@tanstack/react-table';
 import { DeleteIcon, Edit, Rocket } from 'lucide-react';
 
 import type { Profile } from '@/types/profile';
-import { useProfiles } from '@/lib/effects';
+import { useDebounce, useProfiles } from '@/lib/effects';
 
 import { ProfileDialogDelete } from './profile-dialog-delete';
 import { ProfileDialogForm } from './profile-dialog-form';
 import { DataTable } from './ui/data-table';
+import { Input } from './ui/input';
 
 export interface ProfileTableProps {
   current?: string | null;
@@ -51,13 +52,13 @@ function ProfileActions({
   const router = useRouter();
   const pathname = usePathname();
 
-  const onDelete = useCallback(() => {
+  const onDelete = React.useCallback(() => {
     const query = new URLSearchParams();
     query.set('d', profile.name);
     router.push(`${pathname}?${query.toString()}`);
   }, [pathname, profile.name, router]);
 
-  const onEdit = useCallback(() => {
+  const onEdit = React.useCallback(() => {
     const query = new URLSearchParams();
     query.set('e', profile.name);
     router.push(`${pathname}?${query.toString()}`);
@@ -96,8 +97,10 @@ export function ProfileTable({ current, onConnect }: ProfileTableProps) {
   const qs = useSearchParams();
   const editId = qs.get('e');
   const [data, , , setData, fetchData] = useProfiles();
+  const [filter, setFilter] = React.useState('');
+  const [debounceFilter, setDebounceFilter] = useDebounce(500, filter);
 
-  const columns = useMemo<ColumnDef<Profile>[]>(
+  const columns = React.useMemo<ColumnDef<Profile>[]>(
     () => [
       {
         accessorKey: 'name',
@@ -112,18 +115,28 @@ export function ProfileTable({ current, onConnect }: ProfileTableProps) {
     [current, onConnect],
   );
 
-  const tableData = useMemo(() => {
-    return (data || []).sort((a: any) => (a.name === current ? -1 : 1));
-  }, [current, data]);
+  const tableData = React.useMemo(() => {
+    // sort by name
+    let sortedData = data;
+    if (debounceFilter) {
+      sortedData = (data || []).filter((p) => p.name.includes(debounceFilter));
+    } else {
+      sortedData = (data || []).sort((a: any, b: any) =>
+        a.name.localeCompare(b.name),
+      );
+    }
+    // move current profile to the top
+    return sortedData.sort((a: any) => (a.name === current ? -1 : 1));
+  }, [current, data, debounceFilter]);
 
-  const editProfile = useMemo(
+  const editProfile = React.useMemo(
     () => tableData.find(({ name }) => name === editId) || null,
     [editId, tableData],
   );
 
-  const onDelete = useCallback(() => fetchData(), [fetchData]);
+  const onDelete = React.useCallback(() => fetchData(), [fetchData]);
 
-  const onProfileFormOpenChange = useCallback(
+  const onProfileFormOpenChange = React.useCallback(
     (o: boolean) => {
       if (o) return;
       router.replace(pathname);
@@ -131,7 +144,7 @@ export function ProfileTable({ current, onConnect }: ProfileTableProps) {
     [router, pathname],
   );
 
-  const afterProfileForm = useCallback(
+  const afterProfileForm = React.useCallback(
     (profile: Profile) => {
       if (editId) {
         setData((d) => d?.map((p) => (p.name === editId ? profile : p)));
@@ -140,7 +153,16 @@ export function ProfileTable({ current, onConnect }: ProfileTableProps) {
       }
       router.replace(pathname);
     },
-    [setData, editId, router, pathname],
+    [editId, router, pathname, setData],
+  );
+
+  const onSearchChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = event.currentTarget.value;
+      setDebounceFilter(value || '');
+      setFilter(value || '');
+    },
+    [setDebounceFilter],
   );
 
   return (
@@ -152,9 +174,15 @@ export function ProfileTable({ current, onConnect }: ProfileTableProps) {
           editId={editId}
           afterSubmit={afterProfileForm}
           onOpenChange={onProfileFormOpenChange}
-          className="absolute top-3 z-10 cursor-pointer"
+          className="absolute top-14 z-10 cursor-pointer"
         />
       </div>
+      <Input
+        placeholder="Search"
+        className="mb-2"
+        value={filter}
+        onChange={onSearchChange}
+      />
       <DataTable columns={columns} data={tableData} />
     </div>
   );
