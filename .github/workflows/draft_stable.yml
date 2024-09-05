@@ -76,7 +76,7 @@ jobs:
         run: |
           gh release create -d \
             $VERSION-$CHANNEL \
-            -t -$VERSION-$CHANNEL \
+            -t $VERSION-$CHANNEL \
             -F ./CHANGELOG.md \
             ./src-tauri/target/release/bundle/deb/wireguard-gui_${VERSION}_amd64.deb#wireguard-gui_amd64.deb \
             ./src-tauri/target/release/bundle/appimage/wireguard-gui_${VERSION}_amd64.AppImage#wireguard-gui_amd64.AppImage
@@ -87,7 +87,7 @@ jobs:
         run: |
           gh release delete-asset -y \
             $VERSION-$CHANNEL \
-            /wireguard-gui_${VERSION}_amd64.deb || true
+            wireguard-gui_${VERSION}_amd64.deb || true
           gh release delete-asset -y \
             $VERSION-$CHANNEL \
             wireguard-gui_${VERSION}_amd64.AppImage|| true
