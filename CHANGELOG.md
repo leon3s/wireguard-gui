@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Sort profiles by name case insensitive
 - deb ubuntu 24.04 support
 
+
 ## [0.1.5] - 2024-09-05
 
 ### Added
@@ -19,11 +20,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Sort profiles by name
 - Search bar to filter profiles by name
 
+
 ## [0.1.4] - 2024-09-02
 
 ### Changed
 
 - Switch from zenity to polkit for authentication by [@CD11b](https://github.com/CD11b)
+
 
 ## [0.1.3] - 2024-08-04
 
@@ -35,17 +38,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Show current version in the header
 
+
 ## [0.1.2] - 2024-07-07
 
 ### Added
 
 - Better error handling
 
+
 ## [0.1.1] - 2024-02-25
 
 ### Changed
 
 - Icon instead of dropdown menu on profile table to delete, edit and connect
+
 
 ## [0.1.0] - 2024-01-30
 
