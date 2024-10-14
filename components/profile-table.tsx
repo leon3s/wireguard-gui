@@ -119,7 +119,8 @@ export function ProfileTable({ current, onConnect }: ProfileTableProps) {
     // sort by name
     let sortedData = data;
     if (debounceFilter) {
-      sortedData = (data || []).filter((p) => p.name.includes(debounceFilter));
+      sortedData = (data || []).filter((p) => p.name.toLowerCase()
+        .includes(debounceFilter.toLowerCase()));
     } else {
       sortedData = (data || []).sort((a: any, b: any) =>
         a.name.localeCompare(b.name),
