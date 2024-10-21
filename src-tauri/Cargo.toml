@@ -21,7 +21,7 @@ strip = true # Remove debug symbols
 tauri-build = { version = "1.5", features = [] }
 
 [dependencies]
-serde_json = "1.0.127"
+serde_json = "1.0.132"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.8", features = ["system-tray", "api-all", "icon-png"] }
 tauri-plugin-window-state = "0.1.1"
