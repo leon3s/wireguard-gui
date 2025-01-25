@@ -2,7 +2,7 @@
 
 import { Suspense, useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
-import { getVersion } from '@tauri-apps/api/app';
+// import { getVersion } from '@tauri-apps/api/core';
 import { Lock, PowerOff, Unlock } from 'lucide-react';
 
 import { connect, disconnect, useAppLoader, useAppState } from '@/lib/effects';
@@ -15,9 +15,9 @@ export default function Index() {
   const [appLoader, setAppLoader] = useAppLoader();
   const [appVersion, setAppVersion] = useState<string | null>(null);
 
-  useEffect(() => {
-    getVersion().then((v) => setAppVersion(v));
-  }, []);
+  // useEffect(() => {
+  //   getVersion().then((v) => setAppVersion(v));
+  // }, []);
 
   const onConnectionFinish = useCallback(() => {
     return () => {
