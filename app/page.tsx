@@ -2,7 +2,7 @@
 
 import { Suspense, useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
-// import { getVersion } from '@tauri-apps/api/core';
+import { getVersion } from '@tauri-apps/api/app';
 import { Lock, PowerOff, Unlock } from 'lucide-react';
 
 import { connect, disconnect, useAppLoader, useAppState } from '@/lib/effects';
@@ -15,9 +15,9 @@ export default function Index() {
   const [appLoader, setAppLoader] = useAppLoader();
   const [appVersion, setAppVersion] = useState<string | null>(null);
 
-  // useEffect(() => {
-  //   getVersion().then((v) => setAppVersion(v));
-  // }, []);
+  useEffect(() => {
+    getVersion().then((v) => setAppVersion(v));
+  }, []);
 
   const onConnectionFinish = useCallback(() => {
     return () => {
@@ -54,7 +54,7 @@ export default function Index() {
   }, [state, setAppLoader, onConnectionFinish, onError]);
 
   return (
-    <div className="bg-background">
+    <div className="bg-background h-screen">
       <AppLoader {...appLoader} />
       <div className="m-auto flex max-w-screen-lg flex-col px-4 pt-4">
         <div className="mb-8 flex items-center justify-between">

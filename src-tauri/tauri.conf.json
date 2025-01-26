@@ -44,16 +44,12 @@
   "identifier": "com.wireguard-gui.io",
   "plugins": {},
   "app": {
-    "trayIcon": {
-      "iconPath": "icons/tray.png",
-      "iconAsTemplate": true
-    },
     "windows": [
       {
         "transparent": false,
         "decorations": true,
         "fullscreen": false,
-        "height": 600,
+        "height": 642,
         "resizable": false,
         "title": "WireGuard GUI",
         "width": 400,
