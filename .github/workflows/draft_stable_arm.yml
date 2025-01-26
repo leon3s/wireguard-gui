@@ -56,13 +56,13 @@ jobs:
           path: ./src-next/.next
           key: ${{ hashFiles('./src-next/package-lock.json') }}
 
-      - uses: pguyot/arm-runner-action@v2.5.2
+      - uses: pguyot/arm-runner-action@v2.6.5
         with:
           base_image: https://dietpi.com/downloads/images/DietPi_RPi-ARMv8-Bullseye.img.xz
           cpu: cortex-a53
           bind_mount_repository: true
           image_additional_mb: 10240
-          optimize_image: false
+          optimize_image: no
           commands: |
             # Rust complains (rightly) that $HOME doesn't match eid home
             export HOME=/root
