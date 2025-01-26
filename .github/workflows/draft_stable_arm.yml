@@ -29,6 +29,7 @@ jobs:
           echo $GITHUB_REF
           echo $CHANNEL
           echo $VERSION
+          sudo apt install -y qemu-user-static binfmt-support
 
       # Cache Rust
       - uses: actions/cache@v3
