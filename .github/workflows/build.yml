@@ -66,5 +66,3 @@ jobs:
 
       - name: Build application
         run: npm run tauri build -- --verbose
-        # env:
-        #   NO_STRIP: 'true'

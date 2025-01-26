@@ -234,6 +234,9 @@ async fn delete_profile(
       let mut s = app_state.0.lock().await;
       s.current = None;
       s.conn_st = ConnSt::Disconnected;
+      let tray = app.tray_by_id("main").unwrap();
+      tray.set_icon(Some(Image::from_bytes(TRAY_DISCONNECTED_ICON).unwrap()))
+        .unwrap();
       // app
       //   .tray_handle()
       //   .set_icon(Icon::Raw(TRAY_DISCONNECTED_ICON.to_vec()))
@@ -277,20 +280,6 @@ async fn connect_profile(
     .unwrap();
   // Sleep for 5 seconds to let time for network to stabilize
   tokio::time::sleep(std::time::Duration::from_secs(5)).await;
-  // app
-  //   .tray_handle()
-  //   .set_icon(Icon::Raw(TRAY_CONNECTED_ICON.to_vec()))
-  //   .unwrap();
-  // app
-  //   .tray_handle()
-  //   .get_item("conn_info")
-  //   .set_title(format!("Selected {profile}"))
-  //   .unwrap();
-  // app
-  //   .tray_handle()
-  //   .get_item("conn_info")
-  //   .set_enabled(false)
-  //   .unwrap();
   let mut s = app_state.0.lock().await;
   s.current = Some(profile);
   s.conn_st = ConnSt::Connected;
@@ -298,6 +287,9 @@ async fn connect_profile(
     Ok(pub_ip) => Some(pub_ip),
     Err(_) => None,
   };
+  let tray = app.tray_by_id("main").unwrap();
+  tray.set_icon(Some(Image::from_bytes(TRAY_DISCONNECTED_ICON).unwrap()))
+    .unwrap();
   Ok(())
 }
 
@@ -399,7 +391,7 @@ fn build_tray(app: &App) -> Result<TrayIcon, Box<dyn std::error::Error>> {
   let quit_i = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
   let menu = Menu::with_items(app, &[&quit_i])?;
   let image = Image::from_bytes(TRAY_DISCONNECTED_ICON)?;
-  let tray = TrayIconBuilder::new()
+  let tray = TrayIconBuilder::with_id("main")
       .on_tray_icon_event(move |tray, event| {
       if let TrayIconEvent::Click  { id, .. } = event {
         let app = tray.app_handle();
