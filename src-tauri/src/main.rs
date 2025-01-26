@@ -6,8 +6,7 @@ use tokio::{fs, sync::Mutex, process::Command};
 use serde::{Serialize, Deserialize};
 
 use tauri::{
-  AppHandle, CustomMenuItem, Icon, Manager, State, SystemTray, SystemTrayEvent,
-  SystemTrayMenu, SystemTrayMenuItem,
+  image::Image, menu::{Menu, MenuItem}, tray::{TrayIcon, TrayIconBuilder, TrayIconEvent}, App, AppHandle, Manager, State
 };
 
 const WG_SCRIPT: &str = include_str!("../scripts/wg.sh");
@@ -129,38 +128,38 @@ async fn init_app_st() -> AppSt {
   app_state.clone()
 }
 
-async fn create_tray_menu(app_state: &AppSt) -> SystemTray {
-  let wgui = CustomMenuItem::new("wgui".to_string(), APP_TITLE).disabled();
-  let open = CustomMenuItem::new("open".to_string(), "Open");
-  let quit = CustomMenuItem::new("quit".to_string(), "Quit");
-  let mut system_tray = SystemTray::new();
-  let mut tray_menu = SystemTrayMenu::new()
-    .add_item(wgui)
-    .add_native_item(SystemTrayMenuItem::Separator)
-    .add_item(open);
-  let s = app_state.0.lock().await;
-  if s.conn_st == ConnSt::Connected {
-    tray_menu = tray_menu.add_item(
-      CustomMenuItem::new(
-        "conn_info".to_string(),
-        format!("Selected {}", s.current.clone().unwrap()),
-      )
-      .disabled(),
-    );
-    system_tray =
-      system_tray.with_icon(Icon::Raw(TRAY_CONNECTED_ICON.to_vec()));
-  } else {
-    tray_menu = tray_menu.add_item(
-      CustomMenuItem::new("conn_info".to_string(), "Not connected").disabled(),
-    );
-    system_tray =
-      system_tray.with_icon(Icon::Raw(TRAY_DISCONNECTED_ICON.to_vec()));
-  }
-  tray_menu = tray_menu
-    .add_native_item(SystemTrayMenuItem::Separator)
-    .add_item(quit);
-  system_tray.with_menu(tray_menu).with_tooltip(APP_TITLE)
-}
+// async fn create_tray_menu(app_state: &AppSt) -> SystemTray {
+//   let wgui = CustomMenuItem::new("wgui".to_string(), APP_TITLE).disabled();
+//   let open = CustomMenuItem::new("open".to_string(), "Open");
+//   let quit = CustomMenuItem::new("quit".to_string(), "Quit");
+//   let mut system_tray = SystemTray::new();
+//   let mut tray_menu = SystemTrayMenu::new()
+//     .add_item(wgui)
+//     .add_native_item(SystemTrayMenuItem::Separator)
+//     .add_item(open);
+//   let s = app_state.0.lock().await;
+//   if s.conn_st == ConnSt::Connected {
+//     tray_menu = tray_menu.add_item(
+//       CustomMenuItem::new(
+//         "conn_info".to_string(),
+//         format!("Selected {}", s.current.clone().unwrap()),
+//       )
+//       .disabled(),
+//     );
+//     system_tray =
+//       system_tray.with_icon(Icon::Raw(TRAY_CONNECTED_ICON.to_vec()));
+//   } else {
+//     tray_menu = tray_menu.add_item(
+//       CustomMenuItem::new("conn_info".to_string(), "Not connected").disabled(),
+//     );
+//     system_tray =
+//       system_tray.with_icon(Icon::Raw(TRAY_DISCONNECTED_ICON.to_vec()));
+//   }
+//   tray_menu = tray_menu
+//     .add_native_item(SystemTrayMenuItem::Separator)
+//     .add_item(quit);
+//   system_tray.with_menu(tray_menu).with_tooltip(APP_TITLE)
+// }
 
 async fn exec_wg(app_state: &AppSt, profile: &str) -> Result<(), AppError> {
   let conf_dir = app_state.0.lock().await.conf_dir.clone();
@@ -235,20 +234,23 @@ async fn delete_profile(
       let mut s = app_state.0.lock().await;
       s.current = None;
       s.conn_st = ConnSt::Disconnected;
-      app
-        .tray_handle()
-        .set_icon(Icon::Raw(TRAY_DISCONNECTED_ICON.to_vec()))
+      let tray = app.tray_by_id("main").unwrap();
+      tray.set_icon(Some(Image::from_bytes(TRAY_DISCONNECTED_ICON).unwrap()))
         .unwrap();
-      app
-        .tray_handle()
-        .get_item("conn_info")
-        .set_title("Not connected")
-        .unwrap();
-      app
-        .tray_handle()
-        .get_item("conn_info")
-        .set_enabled(false)
-        .unwrap();
+      // app
+      //   .tray_handle()
+      //   .set_icon(Icon::Raw(TRAY_DISCONNECTED_ICON.to_vec()))
+      //   .unwrap();
+      // app
+      //   .tray_handle()
+      //   .get_item("conn_info")
+      //   .set_title("Not connected")
+      //   .unwrap();
+      // app
+      //   .tray_handle()
+      //   .get_item("conn_info")
+      //   .set_enabled(false)
+      //   .unwrap();
       s.pub_ip = match get_pub_ip().await {
         Ok(pub_ip) => Some(pub_ip),
         Err(_) => None,
@@ -278,20 +280,6 @@ async fn connect_profile(
     .unwrap();
   // Sleep for 5 seconds to let time for network to stabilize
   tokio::time::sleep(std::time::Duration::from_secs(5)).await;
-  app
-    .tray_handle()
-    .set_icon(Icon::Raw(TRAY_CONNECTED_ICON.to_vec()))
-    .unwrap();
-  app
-    .tray_handle()
-    .get_item("conn_info")
-    .set_title(format!("Selected {profile}"))
-    .unwrap();
-  app
-    .tray_handle()
-    .get_item("conn_info")
-    .set_enabled(false)
-    .unwrap();
   let mut s = app_state.0.lock().await;
   s.current = Some(profile);
   s.conn_st = ConnSt::Connected;
@@ -299,6 +287,9 @@ async fn connect_profile(
     Ok(pub_ip) => Some(pub_ip),
     Err(_) => None,
   };
+  let tray = app.tray_by_id("main").unwrap();
+  tray.set_icon(Some(Image::from_bytes(TRAY_CONNECTED_ICON).unwrap()))
+    .unwrap();
   Ok(())
 }
 
@@ -318,19 +309,22 @@ async fn disconnect(
   let mut s = app_state.0.lock().await;
   s.current = None;
   s.conn_st = ConnSt::Disconnected;
-  app
-    .tray_handle()
-    .set_icon(Icon::Raw(TRAY_DISCONNECTED_ICON.to_vec()))
-    .unwrap();
-  app
-    .tray_handle()
-    .get_item("conn_info")
-    .set_title("Not connected")
-    .unwrap();
-  app
-    .tray_handle()
-    .get_item("conn_info")
-    .set_enabled(false)
+  // app
+  //   .tray_handle()
+  //   .set_icon(Icon::Raw(TRAY_DISCONNECTED_ICON.to_vec()))
+  //   .unwrap();
+  // app
+  //   .tray_handle()
+  //   .get_item("conn_info")
+  //   .set_title("Not connected")
+  //   .unwrap();
+  // app
+  //   .tray_handle()
+  //   .get_item("conn_info")
+  //   .set_enabled(false)
+  //   .unwrap();
+  let tray = app.tray_by_id("main").unwrap();
+  tray.set_icon(Some(Image::from_bytes(TRAY_DISCONNECTED_ICON).unwrap()))
     .unwrap();
   s.pub_ip = match get_pub_ip().await {
     Ok(pub_ip) => Some(pub_ip),
@@ -385,10 +379,7 @@ async fn list_profile(
     let path = dir.path();
     let file_name = path.file_name().unwrap().to_str().unwrap();
     if file_name.ends_with(".conf") {
-      let content = match fs::read_to_string(&path).await {
-        Err(_) => String::default(),
-        Ok(s) => s,
-      };
+      let content = fs::read_to_string(&path).await.unwrap_or_default();
       let profile = Profile {
         name: file_name.replace(".conf", "").to_string(),
         content,
@@ -399,32 +390,37 @@ async fn list_profile(
   Ok(profiles)
 }
 
-#[tokio::main]
-async fn main() {
-  let app_state = init_app_st().await;
-  let system_tray = create_tray_menu(&app_state).await;
-  tauri::Builder::default()
-    .system_tray(system_tray)
-    .on_system_tray_event(move |app, event| {
-      if let SystemTrayEvent::MenuItemClick { id, .. } = event {
-        match id.as_str() {
+fn build_tray(conn_st: &ConnSt, app: &App) -> Result<TrayIcon, Box<dyn std::error::Error>> {
+  let title = MenuItem::with_id(app, "title", APP_TITLE, false, None::<&str>)?;
+  let quit_i = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
+  let menu = Menu::with_items(app, &[&title, &quit_i])?;
+  let image = if *conn_st == ConnSt::Connected {
+    Image::from_bytes(TRAY_CONNECTED_ICON)?
+  } else {
+    Image::from_bytes(TRAY_DISCONNECTED_ICON)?
+  };
+  let tray = TrayIconBuilder::with_id("main")
+      .on_tray_icon_event(move |tray, event| {
+      if let TrayIconEvent::Click  { id, .. } = event {
+        let app = tray.app_handle();
+        match id.as_ref() {
           "quit" => {
             app.exit(0);
           }
           "open" => {
-            let window = match app.get_window("main") {
+            let window = match app.get_webview_window("main") {
               Some(window) => window,
               None => {
                 #[allow(unused_mut, unused_assignments)]
                 let mut url = "index.html".to_owned();
                 #[cfg(feature = "dev")]
                 {
-                  url = app.config().build.dev_path.to_string();
+                  url = app.config().build.dev_url.clone().unwrap().to_string();
                 }
-                tauri::WindowBuilder::new(
+                tauri::webview::WebviewWindowBuilder::new(
                   app,
                   "main",
-                  tauri::WindowUrl::App(url.into()),
+                  tauri::WebviewUrl::App(url.into()),
                 )
                 .title(APP_TITLE)
                 .visible(false)
@@ -440,6 +436,27 @@ async fn main() {
         }
       }
     })
+  .icon(image)
+  .menu(&menu)
+  .tooltip(APP_TITLE)
+  .icon_as_template(true)
+  .show_menu_on_left_click(true)
+  .build(app)?;
+  let id = tray.id();
+  println!("Inited tray with id: {id:#?}");
+  Ok(tray)
+}
+
+#[tokio::main]
+async fn main() {
+  let app_state = init_app_st().await;
+  let conn_st = app_state.0.lock().await.conn_st.clone();
+  // let system_tray = create_tray_menu(&app_state).await;
+  tauri::Builder::default()
+  .setup(move |app| {
+    build_tray(&conn_st, app)?;
+    Ok(())
+  })
     .manage(app_state)
     .invoke_handler(tauri::generate_handler![
       get_state,
@@ -452,7 +469,8 @@ async fn main() {
     ])
     .plugin(tauri_plugin_window_state::Builder::default().build())
     .build(tauri::generate_context!())
-    .expect("error while building tauri application")
+    .expect("error while running tauri application")
+    // .expect("error while building tauri application")
     .run(|_app_handle, event| {
       if let tauri::RunEvent::ExitRequested { api, .. } = event {
         api.prevent_exit();

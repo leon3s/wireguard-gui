@@ -12,7 +12,7 @@ export function useInvoke<T, I>(initialValue: I, cmd: string, args?: any) {
   const [isLoading, setisLoading] = React.useState<boolean>(true);
   const fetch = React.useCallback(() => {
     setisLoading(true);
-    require('@tauri-apps/api')
+    require('@tauri-apps/api/core')
       .invoke(cmd, args)
       .then((d: T) => setData(d))
       .catch((error: any) => setErr(error))
@@ -34,7 +34,7 @@ export function disconnect(
   onfinally?: () => void,
   onerror?: (err: any) => void,
 ) {
-  require('@tauri-apps/api')
+  require('@tauri-apps/api/core')
     .invoke('disconnect')
     .catch(onerror)
     .finally(onfinally);
@@ -45,7 +45,7 @@ export function connect(
   onfinally?: () => void,
   onerror?: (err: any) => void,
 ) {
-  require('@tauri-apps/api')
+  require('@tauri-apps/api/core')
     .invoke('connect_profile', { profile })
     .catch(onerror)
     .finally(onfinally);
@@ -64,7 +64,7 @@ export function createProfile<T>(
   onerror?: (err: any) => void,
   onfinally?: () => void,
 ) {
-  return require('@tauri-apps/api')
+  return require('@tauri-apps/api/core')
     .invoke('create_profile', { newProfile })
     .then(onsuccess)
     .catch(onerror)
@@ -77,7 +77,7 @@ export function deleteProfile<T>(
   onerror?: (err: any) => void,
   onfinally?: () => void,
 ) {
-  return require('@tauri-apps/api')
+  return require('@tauri-apps/api/core')
     .invoke('delete_profile', { profileName })
     .then(onsuccess)
     .catch(onerror)
@@ -91,7 +91,7 @@ export function updateProfile<T>(
   onerror?: (err: any) => void,
   onfinally?: () => void,
 ) {
-  return require('@tauri-apps/api')
+  return require('@tauri-apps/api/core')
     .invoke('update_profile', { profileName, profile })
     .then(onsuccess)
     .catch(onerror)

@@ -3,69 +3,61 @@
   "build": {
     "beforeBuildCommand": "npm run next-build",
     "beforeDevCommand": "npm run next dev",
-    "devPath": "http://localhost:3000",
-    "distDir": "../out"
+    "frontendDist": "../out",
+    "devUrl": "http://localhost:3000"
   },
-  "package": {
-    "productName": "wireguard-gui",
-    "version": "0.1.6"
+  "bundle": {
+    "active": true,
+    "category": "Utility",
+    "copyright": "Copyright (c) 2024-2025 Wireguard GUI Contributors",
+    "targets": "all",
+    "externalBin": [],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": ""
+    },
+    "longDescription": "A WireGuard GUI for Linux made with Nextauri",
+    "macOS": {
+      "entitlements": null,
+      "exceptionDomain": "",
+      "frameworks": [],
+      "providerShortName": null,
+      "signingIdentity": null
+    },
+    "resources": [],
+    "shortDescription": "",
+    "linux": {
+      "deb": {}
+    }
   },
-  "tauri": {
-    "systemTray": {
-      "iconPath": "icons/tray.png",
-      "iconAsTemplate": true
-    },
-    "allowlist": {
-      "all": true
-    },
-    "bundle": {
-      "active": true,
-      "category": "Utility",
-      "copyright": "Copyright (c) 2024-2025 Wireguard GUI Contributors",
-      "deb": {},
-      "externalBin": [],
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ],
-      "identifier": "com.wireguard-gui.io",
-      "longDescription": "A WireGuard GUI for Linux made with Nextauri",
-      "macOS": {
-        "entitlements": null,
-        "exceptionDomain": "",
-        "frameworks": [],
-        "providerShortName": null,
-        "signingIdentity": null
-      },
-      "resources": [],
-      "shortDescription": "",
-      "targets": "all",
-      "windows": {
-        "certificateThumbprint": null,
-        "digestAlgorithm": "sha256",
-        "timestampUrl": ""
-      }
-    },
-    "security": {
-      "csp": null
-    },
-    "updater": {
-      "active": false
-    },
+  "productName": "wireguard-gui",
+  "mainBinaryName": "wireguard-gui",
+  "version": "0.1.6",
+  "identifier": "com.wireguard-gui.io",
+  "plugins": {},
+  "app": {
     "windows": [
       {
-        "fileDropEnabled": true,
         "transparent": false,
         "decorations": true,
         "fullscreen": false,
-        "height": 600,
+        "height": 642,
         "resizable": false,
         "title": "WireGuard GUI",
-        "width": 400
+        "width": 400,
+        "useHttpsScheme": true
       }
-    ]
+    ],
+    "security": {
+      "csp": null
+    }
   }
 }

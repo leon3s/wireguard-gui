@@ -128,7 +128,12 @@ export default function ProfileForm({
           )}
         />
         {error ? <div className="text-sm text-red-500">{error}</div> : null}
-        <Button className="w-full" type="submit" disabled={isLoading}>
+        <Button
+          variant="outline"
+          className="w-full"
+          type="submit"
+          disabled={isLoading}
+        >
           {isLoading ? 'Loading...' : 'Save'}
         </Button>
       </form>

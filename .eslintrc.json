@@ -1,13 +1,16 @@
 {
   "$schema": "https://json.schemastore.org/eslintrc",
   "root": true,
-  "plugins": ["import", "tailwindcss"],
+  "plugins": [
+    "import"
+    // "tailwindcss",
+  ],
   "extends": [
     "next/core-web-vitals",
-    "prettier",
-    "airbnb-typescript",
-    "airbnb/hooks",
-    "plugin:tailwindcss/recommended"
+    "prettier"
+    // "airbnb-typescript",
+    // "airbnb/hooks",
+    // "plugin:tailwindcss/recommended"
   ],
   "parserOptions": {
     "project": "./tsconfig.json",

@@ -18,16 +18,17 @@ opt-level = "s" # Optimize for binary size
 strip = true # Remove debug symbols
 
 [build-dependencies]
-tauri-build = { version = "1.5", features = [] }
+tauri-build = { version = "2", features = [] }
 
 [dependencies]
 serde_json = "1.0.132"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.8", features = ["system-tray", "api-all", "icon-png"] }
-tauri-plugin-window-state = "0.1.1"
+tauri = { version = "2", features = ["image-png", "tray-icon"] }
+tauri-plugin-window-state = "2"
 reqwest = { version = "0.12", features = ["json"] }
 tokio = { version = "1", features = ["full"] }
 openssl = { version = "0.10", features = ["v110", "vendored"] }
+tauri-plugin-dialog = "2"
 
 [features]
 dev = []
