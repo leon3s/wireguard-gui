@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Upgrade to tauri v2
 - Sort profiles by name case insensitive
-- deb ubuntu 24.04 support
 
 ## [0.1.5] - 2024-09-05
 
